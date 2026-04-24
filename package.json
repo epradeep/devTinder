@@ -14,6 +14,7 @@
   "author": "Pradeep Etika",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongoose": "^9.5.0"
   }
 }
