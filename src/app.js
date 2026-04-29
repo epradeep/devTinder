@@ -4,8 +4,11 @@ const app = express();
 const User = require("./models/user");
 const { validateSignupData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   //valiadate the data
@@ -15,7 +18,6 @@ app.post("/signup", async (req, res) => {
 
   //Encript the password
   const passwordHash = await bcrypt.hash(password, 10);
-  console.log(passwordHash);
 
   //Creating new instance of the User model
   const user = new User({
@@ -28,6 +30,53 @@ app.post("/signup", async (req, res) => {
   try {
     await user.save();
     res.send("User added succeessfull!");
+  } catch (err) {
+    res.status(400).send("ERROR" + err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+
+    const user = await User.findOne({ emailId: emailId });
+
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (isPasswordValid) {
+      // Create a JWT Token
+      const token = await jwt.sign({ _id: user._id }, "DevTider$9700");
+
+      res.cookie("token", token);
+      res.send("Login Successfull!!");
+    } else {
+      throw new Error("Invalid credentials");
+    }
+  } catch (err) {
+    res.status(400).send("ERROR" + err.message);
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const cookies = req.cookies;
+    const { token } = cookies;
+    if (!token) {
+      throw new Error("Invalid Token");
+    }
+    //Validate my token
+    const decodedMessage = await jwt.verify(token, "DevTider$9700");
+    const { _id } = decodedMessage;
+
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    res.send(user);
   } catch (err) {
     res.status(400).send("ERROR" + err.message);
   }
