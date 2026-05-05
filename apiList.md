@@ -25,4 +25,4 @@
 - GET/user/requests
 - GET/user/feed -get you the profiles of other users on plotforms
 
-Status: ignore, interested, accepeted, rejected
+Status: ignored, interested, accepeted, rejected
