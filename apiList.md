@@ -14,6 +14,9 @@
 
 ## connectionReuqestRouter
 
+- POST/request/send/:status/:userId
+- POST/request/review/:status/:requestId
+
 - POST/request/send/interested/:userId
 - POST/request/send/ignore/:userId
 - POST/request/review/accepted/:requestId
@@ -21,8 +24,8 @@
 
 ## userRouter
 
+- GET/user/requests/received
 - GET/user/connections
-- GET/user/requests
 - GET/user/feed -get you the profiles of other users on plotforms
 
 Status: ignored, interested, accepeted, rejected
